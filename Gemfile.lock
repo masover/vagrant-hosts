@@ -2,6 +2,7 @@ PATH
   remote: .
   specs:
     vagrant-hosts (0.1)
+      ghost
       vagrant (~> 0.8.2)
       virtualbox (~> 0.9.1)
 
@@ -12,6 +13,7 @@ GEM
     diff-lcs (1.1.2)
     erubis (2.7.0)
     ffi (1.0.9)
+    ghost (0.2.8)
     i18n (0.5.0)
     json (1.5.3)
     net-scp (1.0.4)
@@ -27,7 +29,7 @@ GEM
       diff-lcs (~> 1.1.2)
     rspec-mocks (2.6.0)
     thor (0.14.6)
-    vagrant (0.8.2)
+    vagrant (0.8.5)
       archive-tar-minitar (= 0.5.2)
       erubis (~> 2.7.0)
       i18n (~> 0.5.0)

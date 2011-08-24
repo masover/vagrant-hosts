@@ -16,20 +16,13 @@ module VagrantHosts
       self.hostname = hostname
       self.ip = ip
     end
-  
-    def shell(code)
-      `#{code}`
-    end
-  
+    
     def add_host_entry
-      shell "sudo dscl localhost -create /Local/Default/Hosts/#{hostname} IPAddress #{ip}"
-      # may need shell "sudo dscacheutil -flushcache -entries host"
-      # especially if this not being availeable was cached before
-      # seems to work without it on Snow Leopard though
+      Host.add(hostname, ip)
     end
   
     def remove_host_entry
-      shell "sudo dscl localhost -delete /Local/Default/Hosts/#{hostname}"
+      Host.delete(hostname)
     end
   
   end

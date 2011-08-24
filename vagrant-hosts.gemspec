@@ -17,6 +17,8 @@ Gem::Specification.new do |s|
 
   s.add_dependency "virtualbox", "~> 0.9.1"
   s.add_dependency "vagrant", "~> 0.8.2"
+  s.add_dependency "ghost"
+  
   s.add_development_dependency "rspec", "~> 2.6.0"
   s.add_development_dependency "bundler", ">= 1.0.0"
 
@@ -24,4 +26,5 @@ Gem::Specification.new do |s|
   # s.test_files   = TODO
   s.executables  = `git ls-files`.split("\n").map{|f| f =~ /^bin\/(.*)/ ? $1 : nil}.compact
   s.require_path = 'lib'
+  
 end

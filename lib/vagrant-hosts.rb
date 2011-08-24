@@ -1,3 +1,4 @@
+require 'ghost'
 require 'vagrant-hosts/plugin'
 
 # TODO: find out if this needs to be in more chains

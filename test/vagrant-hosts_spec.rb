@@ -1,25 +1,30 @@
 require 'vagrant-hosts'
+require 'resolv'
 
 describe VagrantHosts do
   
   before(:each) do
     # don't want accidental executions
+    
     VagrantHosts::HostManager.any_instance.stub(:shell)
   end
   
   describe VagrantHosts::HostManager do
+    let(:resolver) { Resolv::DNS.new }
+    let(:host_name) { "host.name" }
+    let(:ip) { "192.168.1.2" }
     
     before(:each) do
-      @manager = VagrantHosts::HostManager.new("host.name", "192.168.1.2")
+      @manager = VagrantHosts::HostManager.new(host_name, ip)
     end
     
     describe "setup" do
       it "should take the host to manage as initializer argument" do
-        @manager.hostname.should == "host.name"
+        @manager.hostname.should == host_name
       end
       
       it "should take ip address as constructor argument" do
-        @manager.ip.should == "192.168.1.2"
+        @manager.ip.should == ip
       end
       
     end
@@ -27,8 +32,9 @@ describe VagrantHosts do
     describe "adding hostnames" do
       
       it "should be able to create hostname with dscl" do
-        @manager.should_receive(:shell).with "sudo dscl localhost -create /Local/Default/Hosts/host.name IPAddress 192.168.1.2"
         @manager.add_host_entry
+        Host.list.first.ip.should eql(ip)
+        Host.list.first.hostname.should eql(host_name)
       end
       
     end
@@ -36,8 +42,8 @@ describe VagrantHosts do
     describe "removing hostnames" do
       
       it "should description" do
-        @manager.should_receive(:shell).with "sudo dscl localhost -delete /Local/Default/Hosts/host.name"
         @manager.remove_host_entry
+        Host.list.first == nil
       end
       
     end
