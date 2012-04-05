@@ -64,35 +64,35 @@ describe VagrantHosts do
     end
     
     it "should allow no configuration" do
-      @config.validate(@errors)
+      @config.validate(@env, @errors)
       @errors.errors.should be_empty
     end
     
     it "should allow array of names" do
       @config.names = ['example.net', 'example.com']
       
-      @config.validate(@errors)
+      @config.validate(@env, @errors)
       @errors.errors.should be_empty
     end
     
     it "should allow empty array of names" do
       @config.names = []
       
-      @config.validate(@errors)
+      @config.validate(@env, @errors)
       @errors.errors.should be_empty
     end
     
     it "should error on non array for hostnames" do
       @config.names = 23
       
-      @config.validate(@errors)
+      @config.validate(@env, @errors)
       @errors.errors.should_not be_empty
     end
     
     it "should error on hostnames that are not strings" do
       @config.names = [23]
       
-      @config.validate(@errors)
+      @config.validate(@env, @errors)
       @errors.errors.should_not be_empty, "#{@errors.inspect}"
     end
     

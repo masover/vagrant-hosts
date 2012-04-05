@@ -29,7 +29,7 @@ module VagrantHosts
       self.names || []
     end
     
-    def validate(errors)
+    def validate(env, errors)
       return if names.nil?
       return if names.is_a? Array and names.all? { |each| each.is_a? String }
       errors.add(":names needs to be set to an array of strings")
