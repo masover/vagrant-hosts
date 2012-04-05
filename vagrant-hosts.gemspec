@@ -15,8 +15,7 @@ Gem::Specification.new do |s|
   # TODO: Missing?
   # s.rubyforge_project         = "vagrant-hosts"
 
-  s.add_dependency "virtualbox", "~> 0.9.1"
-  s.add_dependency "vagrant", "~> 0.8.2"
+  s.add_dependency "vagrant", "~> 1.0.2"
   s.add_dependency "ghost"
   
   s.add_development_dependency "rspec", "~> 2.6.0"

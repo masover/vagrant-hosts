@@ -1,11 +1,10 @@
 require 'vagrant-hosts'
 require 'resolv'
+require 'ghost'
 
 describe VagrantHosts do
   
   before(:each) do
-    # don't want accidental executions
-    
     VagrantHosts::HostManager.any_instance.stub(:shell)
   end
   
@@ -15,7 +14,8 @@ describe VagrantHosts do
     let(:ip) { "192.168.1.2" }
     
     before(:each) do
-      @manager = VagrantHosts::HostManager.new(host_name, ip)
+      @host_mock = double(Host).as_null_object
+      @manager = VagrantHosts::HostManager.new(host_name, ip, @host_mock)
     end
     
     describe "setup" do
@@ -31,19 +31,18 @@ describe VagrantHosts do
     
     describe "adding hostnames" do
       
-      it "should be able to create hostname with dscl" do
+      it "should be able to create a hostname" do
+        @host_mock.should_receive(:add).once
         @manager.add_host_entry
-        Host.list.first.ip.should eql(ip)
-        Host.list.first.hostname.should eql(host_name)
       end
       
     end
     
     describe "removing hostnames" do
       
-      it "should description" do
+      it "should be able to delete a hostname" do
+        @host_mock.should_receive(:delete).once
         @manager.remove_host_entry
-        Host.list.first == nil
       end
       
     end
@@ -61,7 +60,7 @@ describe VagrantHosts do
     end
     
     it "should configure :hostnames" do
-      @env.config.hosts.should be_kind_of VagrantHosts::HostsConfig
+      @env.config.global.hosts.should be_kind_of VagrantHosts::HostsConfig
     end
     
     it "should allow no configuration" do
@@ -111,8 +110,8 @@ describe VagrantHosts do
       @klass = VagrantHosts::HostsManagingMiddleware
       @app, @env = action_env
       @ware = @klass.new(@app, @env)
-      @env.env.config.hosts.names = ["host.name"]
-      @env.env.config.vm.network "10.10.10.10"
+      @env[:vm].config.hosts.names = ["host.name"]
+      @env[:vm].config.vm.network :hostonly, "10.10.10.10"
       @ware.call(@env)
     end
     
