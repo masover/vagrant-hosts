@@ -1,4 +1,3 @@
-require 'ghost'
 require 'vagrant-hosts/plugin'
 
 Vagrant.config_keys.register(:hosts) {VagrantHosts::HostsConfig}
