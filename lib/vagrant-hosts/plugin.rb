@@ -3,21 +3,27 @@
 require 'vagrant'
 
 module VagrantHosts
+  SUDO = ENV['SUDO'] || 'sudo'
   class HostManager
-    attr_accessor :hostname, :ip, :ghost
+    attr_accessor :hostname, :ip
   
-    def initialize(hostname, ip, ghost=Host)
+    def initialize(hostname, ip)
       self.hostname = hostname
       self.ip = ip
-      self.ghost = ghost
     end
     
     def add_host_entry
-      self.ghost.add(hostname, ip)
+      cmd = [SUDO, 'ghost', 'add', hostname]
+      cmd << ip if ip
+      if system(*cmd).nil?
+        raise $?
+      end
     end
   
     def remove_host_entry
-      self.ghost.delete(hostname)
+      if system(SUDO, 'ghost', 'delete', hostname).nil?
+        raise $?
+      end
     end
   
   end
@@ -51,7 +57,9 @@ module VagrantHosts
       # Vagrant doesn't seem to be sure
       # why it needs a list of ip addresses,
       # so just pick the first one
-      @env['vm'].config.vm.networks[0][1].first
+      # or nil if we can't find anything
+      networks = @env['vm'].config.vm.networks
+      networks.empty? ? nil : networks[0][1].first
     end
     
     def managers
