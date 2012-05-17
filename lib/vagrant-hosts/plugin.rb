@@ -3,17 +3,16 @@
 require 'vagrant'
 
 module VagrantHosts
-  SUDO = ENV['SUDO'] || 'sudo'
   class HostManager
-    attr_accessor :hostname, :ip
+    attr_accessor :hostname, :ip, :config
   
-    def initialize(hostname, ip)
+    def initialize(hostname, ip, config)
       self.hostname = hostname
-      self.ip = ip
+      self.config = config
     end
     
     def add_host_entry
-      cmd = [SUDO, 'ghost', 'add', hostname]
+      cmd = config.command + ['add', hostname]
       cmd << ip if ip
       if system(*cmd).nil?
         raise $?
@@ -21,7 +20,8 @@ module VagrantHosts
     end
   
     def remove_host_entry
-      if system(SUDO, 'ghost', 'delete', hostname).nil?
+      cmd = config.command + ['delete', hostname]
+      if system(*cmd).nil?
         raise $?
       end
     end
@@ -30,9 +30,18 @@ module VagrantHosts
   
   class HostsConfig < Vagrant::Config::Base
     attr_accessor :names
+    attr_writer :command, :sudo
     
     def hostnames()
       self.names || []
+    end
+    
+    def command()
+      @command ||= [sudo, 'ghost']
+    end
+    
+    def sudo()
+      @sudo ||= ENV['SUDO'] || 'sudo'
     end
     
     def validate(env, errors)
@@ -63,7 +72,7 @@ module VagrantHosts
     end
     
     def managers
-      hosts.map { |each| HostManager.new each, ip }
+      hosts.map { |each| HostManager.new each, ip, @env['vm'].config.hosts }
     end
     
     def call(env)
